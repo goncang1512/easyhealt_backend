@@ -15,15 +15,18 @@ datasource db {
 }
 
 model User {
-  id            String    @id
+  id            String     @id
   name          String
   email         String
-  emailVerified Boolean   @default(false)
+  emailVerified Boolean    @default(false)
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @default(now()) @updatedAt
   sessions      Session[]
   accounts      Account[]
+  hospital      Hospital[]
+
+  role String @default("Pacient")
 
   @@unique([email])
   @@map("user")
@@ -72,4 +75,19 @@ model Verification {
   updatedAt  DateTime @default(now()) @updatedAt
 
   @@map("verification")
+}
+
+model Hospital {
+  id          String @id
+  name        String
+  address     String
+  numberPhone String
+  email       String
+  adminId     String
+  admin       User   @relation(fields: [adminId], references: [id])
+  image String?
+  open        String
+  room        Int
+
+  @@map("hospital")
 }

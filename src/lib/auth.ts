@@ -15,6 +15,16 @@ export const auth = betterAuth({
       redirectUrl: "myapp://callback",
     },
   },
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        required: true,
+        defaultValue: "Pacient",
+        input: false,
+      },
+    },
+  },
   emailAndPassword: {
     enabled: true,
   },
