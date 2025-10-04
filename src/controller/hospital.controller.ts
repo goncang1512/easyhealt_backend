@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma-client.js";
+import prisma from "../lib/prisma-client.js";
 import type { Prisma } from "@prisma/client";
 import { generateId } from "better-auth";
 import { Hono } from "hono";
