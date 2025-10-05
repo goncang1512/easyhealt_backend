@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { auth } from "../lib/auth";
 import { Hono } from "hono";
 const betterAuth = new Hono();
 betterAuth.on(["POST", "GET"], "/*", (c) => {

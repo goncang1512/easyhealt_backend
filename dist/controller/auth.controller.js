@@ -1,5 +1,5 @@
-import { auth } from "@/lib/auth";
-import prisma from "@/lib/prisma-client";
+import { auth } from "../lib/auth";
+import prisma from "../lib/prisma-client";
 import { APIError } from "better-auth";
 import { Hono } from "hono";
 const authApp = new Hono();

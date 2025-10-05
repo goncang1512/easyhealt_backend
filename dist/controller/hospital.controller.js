@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma-client";
+import prisma from "../lib/prisma-client";
 import { generateId } from "better-auth";
 import { Hono } from "hono";
 const hospitalApp = new Hono();
