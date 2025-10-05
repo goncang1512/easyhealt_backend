@@ -1,36 +1,18 @@
-// {
-//   "compilerOptions": {
-//     "target": "ESNext",
-//     "module": "NodeNext", // 🟢 pakai NodeNext untuk ESM
-//     "strict": true,
-//     "skipLibCheck": true,
-//     "resolveJsonModule": true,
-//     "esModuleInterop": true,
-//     "types": ["node"],
-//     "lib": ["ESNext"],
-//     "jsx": "react-jsx",
-//     "jsxImportSource": "hono/jsx",
-//     "outDir": "./dist",
-//     "baseUrl": "./"
-//   },
-//   "include": ["src/**/*"],
-//   "exclude": ["node_modules"]
-// }
-
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "ES2022",
-    "moduleResolution": "node",
-    "outDir": "dist",
-    "rootDir": "src",
+    "target": "ESNext",
+    "module": "NodeNext", // 🟢 pakai NodeNext untuk ESM
     "strict": true,
-    "baseUrl": "./src",
-    "paths": {
-      "@/*": ["*"]
-    },
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
-  }
+    "types": ["node"],
+    "lib": ["ESNext"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx",
+    "outDir": "./dist",
+    "baseUrl": "./"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }
