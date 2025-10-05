@@ -89,5 +89,45 @@ model Hospital {
   open        String
   room        Int
 
+  booking Booking[]
+  docter Docter[]
+
   @@map("hospital")
+}
+
+model Docter {
+  id String @id
+  name String
+  specialits String
+  schedule String
+  photoUrl  String
+  photoId String
+  hospitalId  String
+  booking Booking[]
+
+  hospital Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+
+  @@map("docter")
+}
+
+enum StatusBooking {
+  confirm
+  canceled
+}
+
+model Booking {
+  id  String  @id
+  name  String 
+  noPhone String
+  bookDate DateTime
+  bookTime  String
+  note  String?
+  hospitalId String
+  docterId  String
+  status StatusBooking
+
+  docter Docter @relation(fields: [docterId], references: [id], onDelete: Cascade)
+  hospital Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+
+  @@map("booking")
 }
