@@ -1,4 +1,4 @@
-import { auth } from "../lib/auth.js";
+import { auth } from "@/lib/auth";
 import { Hono } from "hono";
 
 const betterAuth = new Hono();
