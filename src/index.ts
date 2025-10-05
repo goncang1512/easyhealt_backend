@@ -1,5 +1,5 @@
 import { serve } from "@hono/node-server";
-import routes from "@/routes/index-routes.js";
+import routes from "./routes/index-routes.js";
 import { Hono } from "hono";
 import * as dotenv from "dotenv";
 
