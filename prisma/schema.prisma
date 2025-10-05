@@ -27,6 +27,7 @@ model User {
   hospital      Hospital[]
 
   role String @default("Pacient")
+  admin Admin?
 
   @@unique([email])
   @@map("user")
@@ -83,14 +84,15 @@ model Hospital {
   address     String
   numberPhone String
   email       String
-  adminId     String
-  admin       User   @relation(fields: [adminId], references: [id])
+  userId     String
+  user      User   @relation(fields: [userId], references: [id])
   image String?
   open        String
   room        Int
 
   booking Booking[]
   docter Docter[]
+  admin Admin[]
 
   @@map("hospital")
 }
@@ -130,4 +132,15 @@ model Booking {
   hospital Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
 
   @@map("booking")
+}
+
+model Admin {
+  id  String @id
+
+  userId  String  @unique
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hospitalId  String
+  hospital  Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+
+  @@map("admin")
 }

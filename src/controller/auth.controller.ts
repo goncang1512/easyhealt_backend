@@ -168,6 +168,18 @@ authApp.get("/session", async (c) => {
           email: true,
           image: true,
           role: true,
+          admin: {
+            select: {
+              id: true,
+              hospital: {
+                select: {
+                  id: true,
+                  name: true,
+                  address: true,
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -185,13 +197,18 @@ authApp.get("/session", async (c) => {
   }
 
   const { user, ...sessionData } = session;
+  const { admin, ...userData } = user;
 
   return c.json(
     {
       status: true,
       statusCode: 200,
       message: "Success get session",
-      result: { session: sessionData, user },
+      result: {
+        session: sessionData,
+        user: userData,
+        hospital: admin?.hospital,
+      },
     },
     200
   );

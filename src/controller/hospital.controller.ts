@@ -15,9 +15,15 @@ hospitalApp.post("/", async (c) => {
         address: body.address,
         email: body.email,
         numberPhone: body.numberPhone,
-        open: body.open,
-        room: body.room,
-        adminId: body.admin_id,
+        open: body.open ?? "24 jam",
+        room: Number(body.room),
+        userId: body.admin_id,
+        admin: {
+          create: {
+            id: generateId(32),
+            userId: body.admin_id,
+          },
+        },
       },
     });
 
@@ -100,7 +106,7 @@ hospitalApp.delete("/:hospital_id", async (c) => {
   });
 });
 
-hospitalApp.put("/:hospital_id", async (c) => {
+hospitalApp.put("/edit/:hospital_id", async (c) => {
   const body = await c.req.json();
   const hospitalId = c.req.param("hospital_id");
 
@@ -115,8 +121,7 @@ hospitalApp.put("/:hospital_id", async (c) => {
         email: body.email,
         numberPhone: body.numberPhone,
         open: body.open,
-        room: body.room,
-        adminId: body.admin_id,
+        room: Number(body.room),
       },
     });
 
@@ -124,6 +129,40 @@ hospitalApp.put("/:hospital_id", async (c) => {
       status: true,
       statusCode: 200,
       message: "Success update hospital",
+      result: result,
+    });
+  } catch (error) {
+    return c.json({
+      status: false,
+      statusCode: 500,
+      message: "Internal Server Error",
+      result: null,
+    });
+  }
+});
+
+hospitalApp.get("/:hospital_id", async (c) => {
+  const hospitalId = c.req.param("hospital_id");
+  try {
+    const result = await prisma.hospital.findFirst({
+      where: {
+        id: hospitalId,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        address: true,
+        numberPhone: true,
+        room: true,
+        open: true,
+      },
+    });
+
+    return c.json({
+      status: true,
+      statusCode: 200,
+      message: "Success get hospital",
       result: result,
     });
   } catch (error) {
