@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 import honoBuild from "@hono/vite-build/node";
 import tsconfigPaths from "vite-tsconfig-paths";
-import path from "path";
 
 export default defineConfig({
   plugins: [honoBuild(), tsconfigPaths()],
@@ -18,11 +17,6 @@ export default defineConfig({
       external: [
         "@prisma/client", // Tambahkan Prisma ke `external`
       ],
-    },
-  },
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
     },
   },
 });
