@@ -1,9 +1,6 @@
 import { serve } from "@hono/node-server";
-import routes from "./routes/index-routes.js";
+import routes from "@/routes/index-routes.js";
 import { Hono } from "hono";
-import * as dotenv from "dotenv";
-
-dotenv.config();
 
 const app = new Hono();
 app.route("/", routes);
@@ -11,7 +8,7 @@ app.route("/", routes);
 serve(
   {
     fetch: app.fetch,
-    port: 3001,
+    port: 3000,
   },
   (info) => {
     console.log(`Server is running on http://localhost:${info.port}`);
