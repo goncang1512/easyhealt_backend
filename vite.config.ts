@@ -1,9 +1,14 @@
 import { defineConfig } from "vite";
 import honoBuild from "@hono/vite-build/node";
-import tsconfigPaths from "vite-tsconfig-paths";
+import path from "path";
 
 export default defineConfig({
-  plugins: [honoBuild(), tsconfigPaths()],
+  plugins: [honoBuild()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"), // <-- ini penting
+    },
+  },
   build: {
     outDir: "dist",
     target: "esnext",
