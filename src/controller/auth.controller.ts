@@ -46,7 +46,7 @@ authApp.post("/provider", async (c) => {
 });
 
 authApp.post("/login", async (c) => {
-  const body = await c.req.json();
+  const body: { email: string; password: string } = await c.req.json();
 
   try {
     const session = await auth.api.signInEmail({
@@ -91,7 +91,12 @@ authApp.post("/login", async (c) => {
 });
 
 authApp.post("/register", async (c) => {
-  const body = await c.req.json();
+  const body: {
+    name: string;
+    password: string;
+    confirmPassword: string;
+    email: string;
+  } = await c.req.json();
 
   try {
     if (body.password !== body.confirmPassword) {
