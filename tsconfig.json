@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "ES2022", // 🟢 pakai NodeNext untuk ESM
-    "moduleResolution": "bundler", // 🟢 resolve .ts ke .js otomatis
-    "noEmit": true,
+    "module": "NodeNext", // 🟢 pakai NodeNext untuk ESM
+    "moduleResolution": "NodeNext", // 🟢 resolve .ts ke .js otomatis
     "strict": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
