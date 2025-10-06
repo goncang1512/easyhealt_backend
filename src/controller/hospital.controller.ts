@@ -2,6 +2,7 @@ import prisma from "../lib/prisma-client.js";
 import type { Prisma } from "@prisma/client";
 import { generateId } from "better-auth";
 import { Hono } from "hono";
+import cloudinary from "src/lib/cloudinary.js";
 
 const hospitalApp = new Hono();
 
@@ -18,6 +19,8 @@ hospitalApp.post("/", async (c) => {
         open: body.open ?? "24 jam",
         room: Number(body.room),
         userId: body.admin_id,
+        image: body.secure_url ?? null,
+        imageId: body.public_id ?? null,
         admin: {
           create: {
             id: generateId(32),
@@ -122,8 +125,14 @@ hospitalApp.put("/edit/:hospital_id", async (c) => {
         numberPhone: body.numberPhone,
         open: body.open,
         room: Number(body.room),
+        image: body.secure_url,
+        imageId: body.public_id,
       },
     });
+
+    if (body.old_public) {
+      await cloudinary.uploader.destroy(body.old_public);
+    }
 
     return c.json({
       status: true,
@@ -156,6 +165,8 @@ hospitalApp.get("/:hospital_id", async (c) => {
         numberPhone: true,
         room: true,
         open: true,
+        image: true,
+        imageId: true,
       },
     });
 
@@ -172,6 +183,44 @@ hospitalApp.get("/:hospital_id", async (c) => {
       message: "Internal Server Error",
       result: null,
     });
+  }
+});
+
+hospitalApp.get("/detail/:hospital_id", async (c) => {
+  const hospitalId = c.req.param("hospital_id");
+  try {
+    const result = await prisma.hospital.findFirst({
+      where: {
+        id: hospitalId,
+      },
+      select: {
+        id: true,
+        name: true,
+        address: true,
+        image: true,
+        room: true,
+      },
+    });
+
+    return c.json(
+      {
+        status: true,
+        statusCode: 200,
+        message: "Success get detail hospital",
+        result,
+      },
+      200
+    );
+  } catch (error) {
+    return c.json(
+      {
+        status: false,
+        statusCode: 500,
+        message: "Internal Server Error",
+        result: null,
+      },
+      500
+    );
   }
 });
 

@@ -26,7 +26,7 @@ model User {
   accounts      Account[]
   hospital      Hospital[]
 
-  role String @default("Pacient")
+  role  String @default("Pacient")
   admin Admin?
 
   @@unique([email])
@@ -79,33 +79,34 @@ model Verification {
 }
 
 model Hospital {
-  id          String @id
+  id          String  @id
   name        String
   address     String
   numberPhone String
   email       String
-  userId     String
-  user      User   @relation(fields: [userId], references: [id])
-  image String?
+  userId      String
+  user        User    @relation(fields: [userId], references: [id])
+  image       String?
+  imageId     String?
   open        String
   room        Int
 
   booking Booking[]
-  docter Docter[]
-  admin Admin[]
+  docter  Docter[]
+  admin   Admin[]
 
   @@map("hospital")
 }
 
 model Docter {
-  id String @id
-  name String
+  id         String    @id
+  name       String
   specialits String
-  schedule String
-  photoUrl  String
-  photoId String
-  hospitalId  String
-  booking Booking[]
+  schedule   String
+  photoUrl   String
+  photoId    String
+  hospitalId String
+  booking    Booking[]
 
   hospital Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
 
@@ -118,29 +119,29 @@ enum StatusBooking {
 }
 
 model Booking {
-  id  String  @id
-  name  String 
-  noPhone String
-  bookDate DateTime
-  bookTime  String
-  note  String?
+  id         String        @id
+  name       String
+  noPhone    String
+  bookDate   DateTime
+  bookTime   String
+  note       String?
   hospitalId String
-  docterId  String
-  status StatusBooking
+  docterId   String
+  status     StatusBooking
 
-  docter Docter @relation(fields: [docterId], references: [id], onDelete: Cascade)
+  docter   Docter   @relation(fields: [docterId], references: [id], onDelete: Cascade)
   hospital Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
 
   @@map("booking")
 }
 
 model Admin {
-  id  String @id
+  id String @id
 
-  userId  String  @unique
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  hospitalId  String
-  hospital  Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hospitalId String
+  hospital   Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
 
   @@map("admin")
 }

@@ -4,6 +4,7 @@ import betterAuth from "../controller/better.controller.js";
 import hospitalApp from "../controller/hospital.controller.js";
 import userApp from "../controller/user.controller.js";
 import { Hono } from "hono";
+import adminApp from "src/controller/admin.controller.js";
 
 const app = new Hono().basePath("/api");
 
@@ -12,6 +13,7 @@ const routes = app
   .route("/auth", betterAuth)
   .route("/sign", authApp)
   .route("/hospital", hospitalApp)
-  .route("/booking", bookApp);
+  .route("/booking", bookApp)
+  .route("/admin", adminApp);
 
 export default routes;
