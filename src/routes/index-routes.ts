@@ -4,7 +4,7 @@ import betterAuth from "../controller/better.controller.js";
 import hospitalApp from "../controller/hospital.controller.js";
 import userApp from "../controller/user.controller.js";
 import { Hono } from "hono";
-import adminApp from "src/controller/admin.controller.js";
+import adminApp from "../controller/admin.controller.js";
 
 const app = new Hono().basePath("/api");
 

@@ -2,7 +2,7 @@ import prisma from "../lib/prisma-client.js";
 import type { Prisma } from "@prisma/client";
 import { generateId } from "better-auth";
 import { Hono } from "hono";
-import cloudinary from "src/lib/cloudinary.js";
+import cloudinary from "../lib/cloudinary.js";
 
 const hospitalApp = new Hono();
 

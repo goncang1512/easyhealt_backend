@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import prisma from "src/lib/prisma-client.js";
+import prisma from "../lib/prisma-client.js";
 
 const adminApp = new Hono();
 
