@@ -2,32 +2,30 @@ import { generateId } from "better-auth";
 import { Hono } from "hono";
 import prisma from "../lib/prisma-client.js";
 
-const bookApp = new Hono();
+const bookingApp = new Hono();
 
-interface BodyCreateBooking {
+type BookingBody = {
   name: string;
   noPhone: string;
-  bookDate: Date;
+  bookDate: string; // gunakan string karena JSON tidak bisa langsung kirim DateTime
   bookTime: string;
   note?: string;
   hospitalId: string;
   docterId: string;
-}
+};
 
-bookApp.post("/", async (c) => {
-  const body: BodyCreateBooking = await c.req.json();
-
+bookingApp.post("/", async (c) => {
+  const body: BookingBody = await c.req.json();
   try {
     const result = await prisma.booking.create({
       data: {
         id: generateId(32),
         name: body.name,
-        noPhone: body.noPhone,
         bookDate: body.bookDate,
         bookTime: body.bookTime,
-        note: body.note,
-        hospitalId: body.hospitalId,
+        noPhone: body.noPhone,
         docterId: body.docterId,
+        hospitalId: body.hospitalId,
         status: "confirm",
       },
     });
@@ -36,8 +34,8 @@ bookApp.post("/", async (c) => {
       {
         status: true,
         statusCode: 201,
-        message: "Success create booking",
-        results: result,
+        message: "Success update docter",
+        result,
       },
       201
     );
@@ -47,11 +45,11 @@ bookApp.post("/", async (c) => {
         status: false,
         statusCode: 500,
         message: "Internal Server Error",
-        results: null,
+        result: null,
       },
       500
     );
   }
 });
 
-export default bookApp;
+export default bookingApp;

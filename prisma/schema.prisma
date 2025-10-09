@@ -79,17 +79,19 @@ model Verification {
 }
 
 model Hospital {
-  id          String  @id
+  id          String   @id
   name        String
   address     String
   numberPhone String
   email       String
   userId      String
-  user        User    @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
   image       String?
   imageId     String?
   open        String
   room        Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
 
   booking Booking[]
   docter  Docter[]
@@ -102,11 +104,13 @@ model Docter {
   id         String    @id
   name       String
   specialits String
-  schedule   String
+  schedule   Json
   photoUrl   String
   photoId    String
   hospitalId String
   booking    Booking[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now()) @updatedAt
 
   hospital Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
 
@@ -122,12 +126,14 @@ model Booking {
   id         String        @id
   name       String
   noPhone    String
-  bookDate   DateTime
+  bookDate   String
   bookTime   String
   note       String?
   hospitalId String
   docterId   String
   status     StatusBooking
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @default(now()) @updatedAt
 
   docter   Docter   @relation(fields: [docterId], references: [id], onDelete: Cascade)
   hospital Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
@@ -136,7 +142,9 @@ model Booking {
 }
 
 model Admin {
-  id String @id
+  id        String   @id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   userId     String   @unique
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)

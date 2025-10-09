@@ -74,6 +74,15 @@ hospitalApp.get("/", async (c) => {
       }
     : {};
 
+  const whereDocter: Prisma.DocterWhereInput = keyword
+    ? {
+        name: {
+          contains: keyword,
+          mode: "insensitive",
+        },
+      }
+    : {};
+
   const results = await prisma.hospital.findMany({
     where,
     select: {
@@ -84,11 +93,26 @@ hospitalApp.get("/", async (c) => {
     },
   });
 
+  const docters = await prisma.docter.findMany({
+    where: whereDocter,
+    select: {
+      id: true,
+      name: true,
+      specialits: true,
+      photoUrl: true,
+      hospital: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+
   return c.json({
     status: true,
     statusCode: 200,
     message: "Success find hospital",
-    result: results,
+    result: { results, docters },
   });
 });
 
@@ -130,7 +154,7 @@ hospitalApp.put("/edit/:hospital_id", async (c) => {
       },
     });
 
-    if (body.old_public) {
+    if (body.old_public && body.old_public !== body.public_id) {
       await cloudinary.uploader.destroy(body.old_public);
     }
 
@@ -199,6 +223,14 @@ hospitalApp.get("/detail/:hospital_id", async (c) => {
         address: true,
         image: true,
         room: true,
+        docter: {
+          select: {
+            id: true,
+            name: true,
+            specialits: true,
+            photoUrl: true,
+          },
+        },
       },
     });
 
