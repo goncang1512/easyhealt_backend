@@ -1,6 +1,6 @@
 import { addHours, format, subHours } from "date-fns";
 import { id } from "date-fns/locale";
-import prisma from "src/lib/prisma-client.js";
+import prisma from "../lib/prisma-client.js";
 
 const adminService = {
   getStatsToday: async (hospitalId: string) => {
