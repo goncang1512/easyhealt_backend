@@ -1,34 +1,23 @@
 import prisma from "../lib/prisma-client.js";
-import type { Prisma } from "@prisma/client";
-import { generateId } from "better-auth";
 import { Hono } from "hono";
 import cloudinary from "../lib/cloudinary.js";
+import {
+  createHospitalSchema,
+  searchQuerySchema,
+  updateHospitalSchema,
+} from "../middleware/validator/hospital.schema.js";
+import z from "zod";
+import hospitalService from "../services/hospital.service.js";
+import { ErrorZod } from "../utils/error-zod.js";
 
 const hospitalApp = new Hono();
 
 hospitalApp.post("/", async (c) => {
   const body = await c.req.json();
+
   try {
-    const result = await prisma.hospital.create({
-      data: {
-        id: generateId(32),
-        name: body.name,
-        address: body.address,
-        email: body.email,
-        numberPhone: body.numberPhone,
-        open: body.open ?? "24 jam",
-        room: Number(body.room),
-        userId: body.admin_id,
-        image: body.secure_url ?? null,
-        imageId: body.public_id ?? null,
-        admin: {
-          create: {
-            id: generateId(32),
-            userId: body.admin_id,
-          },
-        },
-      },
-    });
+    const parse = createHospitalSchema.parse(body);
+    const result = await hospitalService.createHospital(parse);
 
     return c.json(
       {
@@ -40,97 +29,56 @@ hospitalApp.post("/", async (c) => {
       200
     );
   } catch (error) {
-    return c.json(
-      {
-        status: false,
-        statusCode: 500,
-        message: "Internal Server Error",
-        result: null,
-      },
-      500
-    );
+    return ErrorZod(error, c);
   }
 });
 
 hospitalApp.get("/", async (c) => {
-  const keyword = c.req.query("keyword");
+  try {
+    const query = searchQuerySchema.safeParse({
+      keyword: c.req.query("keyword"),
+    });
 
-  const where: Prisma.HospitalWhereInput = keyword
-    ? {
-        OR: [
-          {
-            name: {
-              contains: keyword,
-              mode: "insensitive",
-            },
-          },
-          {
-            address: {
-              contains: keyword,
-              mode: "insensitive",
-            },
-          },
-        ],
-      }
-    : {};
+    const keyword =
+      query.success && query.data.keyword ? query.data.keyword : undefined;
 
-  const whereDocter: Prisma.DocterWhereInput = keyword
-    ? {
-        name: {
-          contains: keyword,
-          mode: "insensitive",
-        },
-      }
-    : {};
+    const data = await hospitalService.searchHospital(keyword);
 
-  const results = await prisma.hospital.findMany({
-    where,
-    select: {
-      id: true,
-      name: true,
-      address: true,
-      image: true,
-    },
-  });
-
-  const docters = await prisma.docter.findMany({
-    where: whereDocter,
-    select: {
-      id: true,
-      name: true,
-      specialits: true,
-      photoUrl: true,
-      hospital: {
-        select: {
-          name: true,
-        },
-      },
-    },
-  });
-
-  return c.json({
-    status: true,
-    statusCode: 200,
-    message: "Success find hospital",
-    result: { results, docters },
-  });
+    return c.json({
+      status: true,
+      statusCode: 200,
+      message: "Success find hospital",
+      result: { results: data.results, docters: data.docters },
+    });
+  } catch (error) {
+    return ErrorZod(error, c);
+  }
 });
 
 hospitalApp.delete("/:hospital_id", async (c) => {
   const hospitalId = c.req.param("hospital_id");
+  try {
+    const parse = z
+      .object({
+        hospitalId: z.string().min(1, "Hospital ID wajib diisi"),
+      })
+      .parse({ hospitalId });
 
-  const result = await prisma.hospital.delete({
-    where: {
-      id: hospitalId,
-    },
-  });
+    const result = await prisma.hospital.delete({
+      where: {
+        id: parse.hospitalId,
+      },
+    });
 
-  return c.json({
-    status: true,
-    statusCode: 200,
-    message: "Success delete hospital",
-    result: result,
-  });
+    return c.json({
+      status: true,
+      statusCode: 200,
+      message: "Success delete hospital",
+      result: result,
+    });
+  } catch (error) {
+    return ErrorZod(error, c);
+  }
 });
 
 hospitalApp.put("/edit/:hospital_id", async (c) => {
@@ -138,21 +86,9 @@ hospitalApp.put("/edit/:hospital_id", async (c) => {
   const hospitalId = c.req.param("hospital_id");
 
   try {
-    const result = await prisma.hospital.update({
-      where: {
-        id: hospitalId,
-      },
-      data: {
-        name: body.name,
-        address: body.address,
-        email: body.email,
-        numberPhone: body.numberPhone,
-        open: body.open,
-        room: Number(body.room),
-        image: body.secure_url,
-        imageId: body.public_id,
-      },
-    });
+    const parse = updateHospitalSchema.parse({ ...body, hospitalId });
+
+    const result = hospitalService.updateHospital(parse);
 
     if (body.old_public && body.old_public !== body.public_id) {
       await cloudinary.uploader.destroy(body.old_public);
@@ -165,34 +101,22 @@ hospitalApp.put("/edit/:hospital_id", async (c) => {
       result: result,
     });
   } catch (error) {
-    return c.json({
-      status: false,
-      statusCode: 500,
-      message: "Internal Server Error",
-      result: null,
-    });
+    return ErrorZod(error, c);
   }
 });
 
 hospitalApp.get("/:hospital_id", async (c) => {
   const hospitalId = c.req.param("hospital_id");
   try {
-    const result = await prisma.hospital.findFirst({
-      where: {
-        id: hospitalId,
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        address: true,
-        numberPhone: true,
-        room: true,
-        open: true,
-        image: true,
-        imageId: true,
-      },
-    });
+    const parse = z
+      .object({
+        hospitalId: z.string().min(1, "Hospital ID wajib diisi"),
+      })
+      .parse({ hospitalId });
+
+    const result = await hospitalService.getUpdateDetailHospital(
+      parse.hospitalId
+    );
 
     return c.json({
       status: true,
@@ -201,38 +125,20 @@ hospitalApp.get("/:hospital_id", async (c) => {
       result: result,
     });
   } catch (error) {
-    return c.json({
-      status: false,
-      statusCode: 500,
-      message: "Internal Server Error",
-      result: null,
-    });
+    return ErrorZod(error, c);
   }
 });
 
 hospitalApp.get("/detail/:hospital_id", async (c) => {
   const hospitalId = c.req.param("hospital_id");
   try {
-    const result = await prisma.hospital.findFirst({
-      where: {
-        id: hospitalId,
-      },
-      select: {
-        id: true,
-        name: true,
-        address: true,
-        image: true,
-        room: true,
-        docter: {
-          select: {
-            id: true,
-            name: true,
-            specialits: true,
-            photoUrl: true,
-          },
-        },
-      },
-    });
+    const parse = z
+      .object({
+        hospitalId: z.string().min(1, "Hospital ID wajib diisi"),
+      })
+      .parse({ hospitalId });
+
+    const result = await hospitalService.getDetailHospital(parse.hospitalId);
 
     return c.json(
       {
@@ -244,15 +150,7 @@ hospitalApp.get("/detail/:hospital_id", async (c) => {
       200
     );
   } catch (error) {
-    return c.json(
-      {
-        status: false,
-        statusCode: 500,
-        message: "Internal Server Error",
-        result: null,
-      },
-      500
-    );
+    return ErrorZod(error, c);
   }
 });
 

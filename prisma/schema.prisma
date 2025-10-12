@@ -26,8 +26,11 @@ model User {
   accounts      Account[]
   hospital      Hospital[]
 
-  role  String @default("Pacient")
-  admin Admin?
+  role    String    @default("Pacient")
+  admin   Admin?
+  roomsA  Room[]    @relation("RoomUserA")
+  roomsB  Room[]    @relation("RoomUserB")
+  message Message[]
 
   @@unique([email])
   @@map("user")
@@ -120,6 +123,7 @@ model Docter {
 enum StatusBooking {
   confirm
   canceled
+  finish
 }
 
 model Booking {
@@ -134,6 +138,7 @@ model Booking {
   status     StatusBooking
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @default(now()) @updatedAt
+  bookDateTime DateTime
 
   docter   Docter   @relation(fields: [docterId], references: [id], onDelete: Cascade)
   hospital Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
@@ -152,4 +157,30 @@ model Admin {
   hospital   Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
 
   @@map("admin")
+}
+
+model Room {
+  id        String    @id
+  userAId   String
+  userBId   String
+  userA     User      @relation("RoomUserA", fields: [userAId], references: [id])
+  userB     User      @relation("RoomUserB", fields: [userBId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  message   Message[]
+
+  @@unique([userAId, userBId])
+  @@map("room")
+}
+
+model Message {
+  id        String   @id
+  roomId    String
+  userId    String
+  text      String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  room      Room     @relation(fields: [roomId], references: [id])
+
+  @@map("message")
 }

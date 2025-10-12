@@ -1,5 +1,8 @@
 import { Hono } from "hono";
 import prisma from "../lib/prisma-client.js";
+import z from "zod";
+import { ErrorZod } from "../utils/error-zod.js";
+import adminService from "src/services/admin.service.js";
 
 const adminApp = new Hono();
 
@@ -7,9 +10,15 @@ adminApp.delete("/:user_id", async (c) => {
   const user_id = c.req.param("user_id");
 
   try {
+    const parse = z
+      .object({
+        userId: z.string().min(31, "User ID wajib di isi"),
+      })
+      .parse({ userId: user_id });
+
     const result = await prisma.admin.delete({
       where: {
-        userId: user_id,
+        userId: parse.userId,
       },
     });
 
@@ -23,15 +32,33 @@ adminApp.delete("/:user_id", async (c) => {
       200
     );
   } catch (error) {
+    return ErrorZod(error, c);
+  }
+});
+
+adminApp.get("/stats-today/:hospital_id", async (c) => {
+  const hospitalId = c.req.param("hospital_id");
+
+  try {
+    const parse = z
+      .object({
+        hospitalId: z.string().min(31, "Hospital ID wajib di isi"),
+      })
+      .parse({ hospitalId });
+
+    const result = await adminService.getStatsToday(parse.hospitalId);
+
     return c.json(
       {
-        status: false,
-        statusCode: 500,
-        message: "Internal Server Error",
-        result: null,
+        status: true,
+        statusCode: 200,
+        message: "Success get stats dashboard",
+        result: result,
       },
-      500
+      200
     );
+  } catch (error) {
+    return ErrorZod(error, c);
   }
 });
 

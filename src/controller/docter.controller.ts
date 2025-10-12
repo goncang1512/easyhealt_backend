@@ -1,33 +1,21 @@
-import { generateId } from "better-auth";
 import { Hono } from "hono";
 import cloudinary from "../lib/cloudinary.js";
 import prisma from "../lib/prisma-client.js";
+import {
+  createDocterSchema,
+  updateDocterSchema,
+} from "../middleware/validator/docter.schema.js";
+import docterService from "../services/docter.service.js";
+import { z } from "zod";
+import { ErrorZod } from "../utils/error-zod.js";
 
 const docterApp = new Hono();
 
-type CrateDocter = {
-  name: string;
-  specialits: string;
-  schedule: string;
-  hospital_id: string;
-  secure_url: string;
-  public_id: string;
-};
-
 docterApp.post("/", async (c) => {
-  const body: CrateDocter = await c.req.json();
+  const body = await c.req.json();
   try {
-    const result = await prisma.docter.create({
-      data: {
-        id: generateId(32),
-        name: body.name,
-        specialits: body.specialits,
-        schedule: JSON.parse(body.schedule),
-        hospitalId: body.hospital_id,
-        photoId: body.public_id,
-        photoUrl: body.secure_url,
-      },
-    });
+    const parse = createDocterSchema.parse(body);
+    const result = docterService.createDocter(parse);
 
     return c.json(
       {
@@ -39,40 +27,21 @@ docterApp.post("/", async (c) => {
       201
     );
   } catch (error) {
-    return c.json(
-      {
-        status: false,
-        statusCode: 500,
-        message: "Internal Server Error",
-        result: null,
-      },
-      500
-    );
+    return ErrorZod(error, c);
   }
 });
 
 docterApp.get("/:hospital_id", async (c) => {
   const hospitalId = c.req.param("hospital_id");
+
   try {
-    const result = await prisma.docter.findMany({
-      where: {
-        hospitalId,
-      },
-      select: {
-        id: true,
-        name: true,
-        specialits: true,
-        photoUrl: true,
-        hospital: {
-          select: {
-            name: true,
-          },
-        },
-      },
-      orderBy: {
-        updatedAt: "asc",
-      },
-    });
+    const parse = z
+      .object({
+        hospitalId: z.string().min(31, "Hospital id wajib di isi"),
+      })
+      .parse({ hospitalId });
+
+    const result = await docterService.getDocterHospital(parse.hospitalId);
 
     return c.json(
       {
@@ -84,24 +53,23 @@ docterApp.get("/:hospital_id", async (c) => {
       201
     );
   } catch (error) {
-    return c.json(
-      {
-        status: false,
-        statusCode: 500,
-        message: "Internal Server Error",
-        result: null,
-      },
-      500
-    );
+    return ErrorZod(error, c);
   }
 });
 
 docterApp.get("/edit-detail/:docter_id", async (c) => {
   const docterId = c.req.param("docter_id");
+
   try {
+    const parse = z
+      .object({
+        docterId: z.string().min(31, "Hospital id wajib di isi"),
+      })
+      .parse({ docterId });
+
     const result = await prisma.docter.findFirst({
       where: {
-        id: docterId,
+        id: parse.docterId,
       },
     });
 
@@ -115,15 +83,7 @@ docterApp.get("/edit-detail/:docter_id", async (c) => {
       200
     );
   } catch (error) {
-    return c.json(
-      {
-        status: false,
-        statusCode: 500,
-        message: "Internal Server Error",
-        result: null,
-      },
-      500
-    );
+    return ErrorZod(error, c);
   }
 });
 
@@ -131,21 +91,12 @@ docterApp.put("/edit-docter/:docter_id", async (c) => {
   const docterId = c.req.param("docter_id");
   const body = await c.req.json();
   try {
-    const result = await prisma.docter.update({
-      where: {
-        id: docterId,
-      },
-      data: {
-        name: body.name,
-        specialits: body.specialits,
-        schedule: JSON.parse(body.schedule),
-        photoId: body.public_id,
-        photoUrl: body.secure_url,
-      },
-    });
+    const parse = updateDocterSchema.parse({ ...body, docterId });
 
-    if (body.old_public && body.old_public !== body.public_id) {
-      await cloudinary.uploader.destroy(body.old_public);
+    const result = await docterService.updateDocterSchema(parse);
+
+    if (parse.old_public && parse.old_public !== parse.public_id) {
+      await cloudinary.uploader.destroy(parse.old_public);
     }
 
     return c.json(
@@ -158,38 +109,20 @@ docterApp.put("/edit-docter/:docter_id", async (c) => {
       200
     );
   } catch (error) {
-    return c.json(
-      {
-        status: false,
-        statusCode: 500,
-        message: "Internal Server Error",
-        result: null,
-      },
-      500
-    );
+    return ErrorZod(error, c);
   }
 });
 
 docterApp.get("/detail-docter/:docter_id", async (c) => {
   const docterId = c.req.param("docter_id");
   try {
-    const result = await prisma.docter.findFirst({
-      where: {
-        id: docterId,
-      },
-      select: {
-        id: true,
-        name: true,
-        specialits: true,
-        photoUrl: true,
-        hospital: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-      },
-    });
+    const parse = z
+      .object({
+        docterId: z.string().min(31, "Hospital id wajib di isi"),
+      })
+      .parse({ docterId });
+
+    const result = await docterService.getDetailDocter(parse.docterId);
 
     return c.json(
       {
@@ -201,15 +134,7 @@ docterApp.get("/detail-docter/:docter_id", async (c) => {
       200
     );
   } catch (error) {
-    return c.json(
-      {
-        status: false,
-        statusCode: 500,
-        message: "Internal Server Error",
-        result: null,
-      },
-      500
-    );
+    return ErrorZod(error, c);
   }
 });
 
