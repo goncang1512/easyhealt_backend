@@ -57,7 +57,11 @@ const adminService = {
     };
   },
   getBookingInRange: async (hospitalId: string) => {
-    const now = new Date();
+    const WIB_OFFSET = 7;
+
+    // waktu sekarang di WIB
+    const now = addHours(new Date(), WIB_OFFSET);
+
     const startRange = subHours(now, 2); // 2 jam ke belakang
     const endRange = addHours(now, 6); // 6 jam ke depan
 
@@ -66,8 +70,8 @@ const adminService = {
       where: {
         hospitalId,
         bookDateTime: {
-          gte: startRange,
-          lte: endRange,
+          gte: startRange.toISOString(),
+          lte: endRange.toISOString(),
         },
       },
       select: {
