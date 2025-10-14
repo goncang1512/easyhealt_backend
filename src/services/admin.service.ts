@@ -57,7 +57,7 @@ const adminService = {
     };
   },
   getBookingInRange: async (hospitalId: string) => {
-    const WIB_OFFSET = 7;
+    const WIB_OFFSET = process.env.NODE_ENV === "development" ? 0 : 7;
 
     // waktu sekarang di WIB
     const now = addHours(new Date(), WIB_OFFSET);

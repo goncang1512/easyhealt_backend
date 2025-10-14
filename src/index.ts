@@ -8,12 +8,28 @@ app.use("/*", async (c, next) => {
   const apiKey = c.req.header("x-api-key"); // ambil dari header
 
   if (!apiKey) {
-    return c.json({ success: false, message: "API Key is missing" }, 401);
+    return c.json(
+      {
+        status: false,
+        statusCode: 401,
+        message: "API Key is missing",
+        result: null,
+      },
+      401
+    );
   }
 
   // validasi API key dengan yang ada di environment
   if (apiKey !== process.env.API_KEY) {
-    return c.json({ success: false, message: "Invalid API Key" }, 403);
+    return c.json(
+      {
+        status: false,
+        statusCode: 403,
+        message: "Invalid API Key",
+        result: null,
+      },
+      403
+    );
   }
 
   await next(); // lanjut ke route berikutnya

@@ -1,111 +1,78 @@
 import { Hono } from "hono";
-import prisma from "../lib/prisma-client.js";
-import { generateId } from "better-auth";
+import messageService from "../services/message.service.js";
+import { ErrorZod } from "../utils/error-zod.js";
+import {
+  createRoomSchema,
+  sendChatSchema,
+} from "../middleware/validator/message.schema.js";
+import z from "zod";
 
 const messageApp = new Hono();
 
 messageApp.post("/room", async (c) => {
   const { senderId, receiverId } = await c.req.json();
   try {
-    if (!senderId || !receiverId) {
-      return c.json(
-        {
-          status: false,
-          statusCode: 400,
-          message: "senderId and receiverId required",
-          result: null,
-        },
-        400
-      );
-    }
+    const parse = createRoomSchema.parse({ senderId, receiverId });
 
-    const [userAId, userBId] = [senderId, receiverId].sort();
-
-    // cari room yang sudah ada
-    let room = await prisma.room.findFirst({
-      where: { userAId, userBId },
-      select: {
-        id: true,
-        message: {
-          select: {
-            text: true,
-          },
-        },
-      },
-    });
-
-    // jika belum ada, buat
-    if (!room) {
-      room = await prisma.room.create({
-        data: {
-          id: generateId(32),
-          userAId,
-          userBId,
-        },
-        select: {
-          id: true,
-          message: {
-            select: {
-              text: true,
-            },
-          },
-        },
-      });
-    }
+    const rseult = await messageService.createRoom(parse);
 
     return c.json(
       {
-        status: false,
+        status: true,
         statusCode: 201,
         message: "Success create room",
-        result: room,
+        result: rseult,
       },
       201
     );
   } catch (error) {
-    return c.json(
-      {
-        status: false,
-        statusCode: 500,
-        message: "Internal Server Error",
-        result: null,
-      },
-      500
-    );
+    return ErrorZod(error, c);
   }
 });
 
 messageApp.post("/chat", async (c) => {
   const { senderId, roomId, text } = await c.req.json();
   try {
-    const message = await prisma.message.create({
-      data: {
-        id: generateId(32),
-        userId: senderId,
-        roomId: roomId,
-        text,
-      },
-    });
+    const parse = sendChatSchema.parse({ senderId, roomId, text });
+
+    const message = await messageService.sendMessage(parse);
 
     return c.json(
       {
-        status: false,
+        status: true,
         statusCode: 201,
         message: "Success create message",
-        result: message,
+        result: message as any,
       },
       201
     );
   } catch (error) {
+    return ErrorZod(error, c);
+  }
+});
+
+messageApp.get("/conversation/:room_id", async (c) => {
+  const roomId = c.req.param("room_id");
+  try {
+    const parse = z
+      .object({
+        roomId: z.string().min(1, "Room ID wajib di isi"),
+      })
+      .parse({ roomId });
+
+    const result = await messageService.getConversation(parse.roomId);
+
     return c.json(
       {
-        status: false,
-        statusCode: 500,
-        message: "Internal Server Error",
-        result: null,
+        status: true,
+        statusCode: 200,
+        message: "Success get room conversation",
+        result: result,
       },
-      500
+      200
     );
+  } catch (error) {
+    return ErrorZod(error, c);
   }
 });
 

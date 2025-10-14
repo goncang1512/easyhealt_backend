@@ -121,6 +121,17 @@ const hospitalService = {
             photoUrl: true,
           },
         },
+        admin: {
+          select: {
+            id: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
   },
