@@ -131,6 +131,18 @@ const hospitalService = {
               },
             },
           },
+          orderBy: [
+            {
+              user: {
+                lastSeen: { sort: "asc", nulls: "first" }, // ❌ hanya tersedia di Prisma v6 ke atas
+              },
+            },
+            {
+              user: {
+                lastSeen: "desc",
+              },
+            },
+          ],
         },
       },
     });

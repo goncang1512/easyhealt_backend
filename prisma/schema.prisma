@@ -25,12 +25,14 @@ model User {
   sessions      Session[]
   accounts      Account[]
   hospital      Hospital[]
+  lastSeen      DateTime?
 
   role    String    @default("Pacient")
   admin   Admin?
   roomsA  Room[]    @relation("RoomUserA")
   roomsB  Room[]    @relation("RoomUserB")
   message Message[]
+  docters Docter[]
 
   @@unique([email])
   @@map("user")
@@ -83,7 +85,7 @@ model Verification {
 
 model Hospital {
   id          String   @id
-  name        String
+  name        String   @unique
   address     String
   numberPhone String
   email       String
@@ -105,17 +107,19 @@ model Hospital {
 
 model Docter {
   id         String    @id
-  name       String
+  userId     String
   specialits String
   schedule   Json
   photoUrl   String
   photoId    String
   hospitalId String
   booking    Booking[]
+  status     String
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @default(now()) @updatedAt
 
   hospital Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("docter")
 }
@@ -127,17 +131,17 @@ enum StatusBooking {
 }
 
 model Booking {
-  id         String        @id
-  name       String
-  noPhone    String
-  bookDate   String
-  bookTime   String
-  note       String?
-  hospitalId String
-  docterId   String
-  status     StatusBooking
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @default(now()) @updatedAt
+  id           String        @id
+  name         String
+  noPhone      String
+  bookDate     String
+  bookTime     String
+  note         String?
+  hospitalId   String
+  docterId     String
+  status       StatusBooking
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @default(now()) @updatedAt
   bookDateTime DateTime
 
   docter   Docter   @relation(fields: [docterId], references: [id], onDelete: Cascade)
