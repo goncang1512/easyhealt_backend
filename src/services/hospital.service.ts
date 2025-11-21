@@ -14,6 +14,27 @@ const hospitalService = {
                 mode: "insensitive",
               },
             },
+            {
+              name: {
+                contains: keyword,
+                mode: "insensitive",
+              },
+            },
+          ],
+        }
+      : {};
+
+    const whereDocter: Prisma.DocterWhereInput = keyword
+      ? {
+          OR: [
+            {
+              user: {
+                name: {
+                  contains: keyword,
+                  mode: "insensitive",
+                },
+              },
+            },
           ],
         }
       : {};
@@ -29,6 +50,7 @@ const hospitalService = {
     });
 
     const docters = await prisma.docter.findMany({
+      where: whereDocter,
       select: {
         id: true,
         specialits: true,

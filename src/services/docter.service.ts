@@ -53,6 +53,11 @@ const docterService = {
         schedule: JSON.parse(body.schedule),
         photoId: body.public_id,
         photoUrl: body.secure_url,
+        user: {
+          update: {
+            name: body.name,
+          },
+        },
       },
     });
   },
