@@ -1,7 +1,7 @@
 import { generateId } from "better-auth";
 import prisma from "../lib/prisma-client.js";
 import { DocterSchemaType } from "../middleware/validator/docter.schema.js";
-import AppError from "src/utils/app-error.js";
+import AppError from "../utils/app-error.js";
 
 const docterService = {
   createDocter: async (body: DocterSchemaType.CreateDocterInput) => {

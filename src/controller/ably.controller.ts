@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import prisma from "../lib/prisma-client.js";
-import { ErrorZod } from "src/utils/error-zod.js";
+import { ErrorZod } from "../utils/error-zod.js";
 
 const socketApp = new Hono();
 
