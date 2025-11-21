@@ -1,5 +1,6 @@
 import { ContentfulStatusCode } from "hono/utils/http-status";
 import z from "zod";
+import AppError from "./app-error.js";
 
 let result = null;
 let statusCode: ContentfulStatusCode | undefined = 200;
@@ -19,6 +20,18 @@ export const ErrorZod = (error: unknown, c: any) => {
         result,
       },
       statusCode
+    );
+  }
+
+  if (error instanceof AppError) {
+    return c.json(
+      {
+        status: false,
+        statusCode: error.statusCode,
+        message: error.message,
+        result: error.result,
+      },
+      error.statusCode
     );
   }
 

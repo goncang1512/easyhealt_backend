@@ -118,6 +118,20 @@ authApp.get("/session", async (c) => {
             email: true,
             image: true,
             role: true,
+            docter: {
+              select: {
+                id: true,
+                specialits: true,
+                photoUrl: true,
+                hospital: {
+                  select: {
+                    id: true,
+                    name: true,
+                    address: true,
+                  },
+                },
+              },
+            },
             admin: {
               select: {
                 id: true,
@@ -147,7 +161,7 @@ authApp.get("/session", async (c) => {
     }
 
     const { user, ...sessionData } = session;
-    const { admin, ...userData } = user;
+    const { admin, docter, ...userData } = user;
 
     return c.json(
       {
@@ -157,7 +171,14 @@ authApp.get("/session", async (c) => {
         result: {
           session: sessionData,
           user: userData,
-          hospital: admin?.hospital,
+          docter: docter
+            ? {
+                id: docter?.id,
+                specialits: docter?.specialits,
+                photoUrl: docter?.photoUrl,
+              }
+            : null,
+          hospital: admin?.hospital ?? docter?.hospital,
         },
       },
       200

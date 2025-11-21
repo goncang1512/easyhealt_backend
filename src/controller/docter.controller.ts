@@ -71,6 +71,17 @@ docterApp.get("/edit-detail/:docter_id", async (c) => {
       where: {
         id: parse.docterId,
       },
+      select: {
+        id: true,
+        specialits: true,
+        photoUrl: true,
+        photoId: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
 
     return c.json(
@@ -78,7 +89,7 @@ docterApp.get("/edit-detail/:docter_id", async (c) => {
         status: true,
         statusCode: 200,
         message: "Success Get docter detail",
-        result,
+        result: { ...result, name: result?.user.name },
       },
       200
     );

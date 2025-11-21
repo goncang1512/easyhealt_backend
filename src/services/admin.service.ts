@@ -80,11 +80,6 @@ const adminService = {
         bookDate: true,
         bookTime: true,
         status: true,
-        docter: {
-          select: {
-            name: true,
-          },
-        },
       },
     });
   },

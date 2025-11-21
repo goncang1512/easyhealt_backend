@@ -14,7 +14,8 @@ export const createDocterSchema = z.object({
         return false;
       }
     }, "Format schedule harus JSON yang valid"),
-  hospital_id: z.string().min(31, "Hospital ID wajib diisi"),
+  user_id: z.string().min(31, "User ID wajib diisi"),
+  hospital_name: z.string().min(1, "Hospital Name wajib diisi"),
   public_id: z.string().min(1, "Public ID gambar wajib diisi"),
   secure_url: z.url("URL gambar tidak valid"),
 });
