@@ -76,6 +76,7 @@ docterApp.get("/edit-detail/:docter_id", async (c) => {
         specialits: true,
         photoUrl: true,
         photoId: true,
+        schedule: true,
         user: {
           select: {
             name: true,
