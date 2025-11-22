@@ -8,7 +8,7 @@ import {
 import docterService from "../services/docter.service.js";
 import { z } from "zod";
 import { ErrorZod } from "../utils/error-zod.js";
-import pacientService from "src/services/pacient.service.js";
+import pacientService from "../services/pacient.service.js";
 
 const docterApp = new Hono();
 

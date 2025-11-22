@@ -1,4 +1,4 @@
-import prisma from "src/lib/prisma-client.js";
+import prisma from "../lib/prisma-client.js";
 
 const pacientService = {
   getPacientDocter: async (docter_id: string) => {
