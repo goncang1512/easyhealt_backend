@@ -55,6 +55,11 @@ const hospitalService = {
         id: true,
         specialits: true,
         photoUrl: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
         hospital: {
           select: {
             name: true,
@@ -63,7 +68,10 @@ const hospitalService = {
       },
     });
 
-    return { results, docters };
+    return {
+      results,
+      docters: docters.map((item) => ({ ...item, name: item.user.name })),
+    };
   },
 
   createHospital: async (body: HospitalSchemaType.CreateHopsitalT) => {
@@ -108,7 +116,7 @@ const hospitalService = {
   },
 
   getDetailHospital: async (hospitalId: string) => {
-    return await prisma.hospital.findFirst({
+    const hospital = await prisma.hospital.findFirst({
       where: {
         id: hospitalId,
       },
@@ -123,6 +131,11 @@ const hospitalService = {
             id: true,
             specialits: true,
             photoUrl: true,
+            user: {
+              select: {
+                name: true,
+              },
+            },
           },
         },
         admin: {
@@ -150,6 +163,13 @@ const hospitalService = {
         },
       },
     });
+
+    const docter = hospital?.docter.map((item) => ({
+      ...item,
+      name: item.user.name,
+    }));
+
+    return { ...hospital, docter };
   },
 
   getUpdateDetailHospital: async (hospitalId: string) => {

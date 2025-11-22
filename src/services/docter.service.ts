@@ -87,7 +87,7 @@ const docterService = {
     });
   },
   getDetailDocter: async (docterId: string) => {
-    return await prisma.docter.findFirst({
+    const docter = await prisma.docter.findFirst({
       where: {
         id: docterId,
       },
@@ -95,6 +95,11 @@ const docterService = {
         id: true,
         specialits: true,
         photoUrl: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
         hospital: {
           select: {
             id: true,
@@ -103,6 +108,8 @@ const docterService = {
         },
       },
     });
+
+    return { ...docter, name: docter?.user.name };
   },
 };
 

@@ -8,6 +8,7 @@ import {
 import docterService from "../services/docter.service.js";
 import { z } from "zod";
 import { ErrorZod } from "../utils/error-zod.js";
+import pacientService from "src/services/pacient.service.js";
 
 const docterApp = new Hono();
 
@@ -135,6 +136,31 @@ docterApp.get("/detail-docter/:docter_id", async (c) => {
       .parse({ docterId });
 
     const result = await docterService.getDetailDocter(parse.docterId);
+
+    return c.json(
+      {
+        status: true,
+        statusCode: 200,
+        message: "Success update docter",
+        result,
+      },
+      200
+    );
+  } catch (error) {
+    return ErrorZod(error, c);
+  }
+});
+
+docterApp.get("/dashboard/:docter_id", async (c) => {
+  const docterId = c.req.param("docter_id");
+  try {
+    const parse = z
+      .object({
+        docterId: z.string().min(31, "Docter id wajib di isi"),
+      })
+      .parse({ docterId });
+
+    const result = await pacientService.getPacientDocter(parse.docterId);
 
     return c.json(
       {
