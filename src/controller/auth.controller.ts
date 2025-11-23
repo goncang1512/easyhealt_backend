@@ -123,6 +123,7 @@ authApp.get("/session", async (c) => {
                 id: true,
                 specialits: true,
                 photoUrl: true,
+                status: true,
                 hospital: {
                   select: {
                     id: true,
@@ -163,6 +164,9 @@ authApp.get("/session", async (c) => {
     const { user, ...sessionData } = session;
     const { admin, docter, ...userData } = user;
 
+    const hospitalDocter =
+      docter?.status === "unverified" ? null : docter?.hospital;
+
     return c.json(
       {
         status: true,
@@ -178,7 +182,7 @@ authApp.get("/session", async (c) => {
                 photoUrl: docter?.photoUrl,
               }
             : null,
-          hospital: admin?.hospital ?? docter?.hospital,
+          hospital: admin?.hospital ?? hospitalDocter,
         },
       },
       200

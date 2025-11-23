@@ -62,7 +62,7 @@ const docterService = {
     });
   },
   getDocterHospital: async (hospitalId: string) => {
-    return await prisma.docter.findMany({
+    const docters = await prisma.docter.findMany({
       where: {
         hospitalId,
       },
@@ -70,6 +70,7 @@ const docterService = {
         id: true,
         specialits: true,
         photoUrl: true,
+        status: true,
         user: {
           select: {
             name: true,
@@ -85,6 +86,8 @@ const docterService = {
         updatedAt: "asc",
       },
     });
+
+    return docters.map((item) => ({ ...item, name: item.user.name }));
   },
   getDetailDocter: async (docterId: string) => {
     const docter = await prisma.docter.findFirst({

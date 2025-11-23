@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { createBookingSchema } from "../middleware/validator/booking.schema.js";
 import bookingService from "../services/booking.service.js";
 import { ErrorZod } from "../utils/error-zod.js";
+import prisma from "../lib/prisma-client.js";
 
 const bookingApp = new Hono();
 
@@ -21,7 +22,34 @@ bookingApp.post("/", async (c) => {
       201
     );
   } catch (error) {
-    console.log(error);
+    return ErrorZod(error, c);
+  }
+});
+
+bookingApp.put("/status/:booking_id", async (c) => {
+  try {
+    const booking_id = c.req.param("booking_id");
+    const { status } = await c.req.json();
+
+    const result = await prisma.booking.update({
+      where: {
+        id: booking_id,
+      },
+      data: {
+        status,
+      },
+    });
+
+    return c.json(
+      {
+        status: true,
+        statusCode: 200,
+        message: "Success update docter",
+        result,
+      },
+      200
+    );
+  } catch (error) {
     return ErrorZod(error, c);
   }
 });

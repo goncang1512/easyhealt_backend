@@ -176,4 +176,32 @@ docterApp.get("/dashboard/:docter_id", async (c) => {
   }
 });
 
+docterApp.put("/status/:docter_id", async (c) => {
+  try {
+    const docter_id = c.req.param("docter_id");
+    const { status } = await c.req.json();
+
+    const result = await prisma.docter.update({
+      where: {
+        id: docter_id,
+      },
+      data: {
+        status,
+      },
+    });
+
+    return c.json(
+      {
+        status: true,
+        statusCode: 200,
+        message: "Success update docter",
+        result,
+      },
+      200
+    );
+  } catch (error) {
+    return ErrorZod(error, c);
+  }
+});
+
 export default docterApp;

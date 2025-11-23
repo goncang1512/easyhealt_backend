@@ -26,6 +26,7 @@ const hospitalService = {
 
     const whereDocter: Prisma.DocterWhereInput = keyword
       ? {
+          status: "verified",
           OR: [
             {
               user: {
@@ -127,6 +128,9 @@ const hospitalService = {
         image: true,
         room: true,
         docter: {
+          where: {
+            status: "verified",
+          },
           select: {
             id: true,
             specialits: true,
