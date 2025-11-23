@@ -24,22 +24,6 @@ const hospitalService = {
         }
       : {};
 
-    const whereDocter: Prisma.DocterWhereInput = keyword
-      ? {
-          status: "verified",
-          OR: [
-            {
-              user: {
-                name: {
-                  contains: keyword,
-                  mode: "insensitive",
-                },
-              },
-            },
-          ],
-        }
-      : {};
-
     const results = await prisma.hospital.findMany({
       where,
       select: {
@@ -50,24 +34,58 @@ const hospitalService = {
       },
     });
 
-    const docters = await prisma.docter.findMany({
-      where: whereDocter,
+    let docters: Prisma.DocterGetPayload<{
       select: {
-        id: true,
-        specialits: true,
-        photoUrl: true,
+        id: true;
+        specialits: true;
+        photoUrl: true;
         user: {
           select: {
-            name: true,
-          },
-        },
+            name: true;
+          };
+        };
         hospital: {
           select: {
-            name: true,
+            name: true;
+          };
+        };
+      };
+    }>[] = [];
+
+    if (keyword) {
+      const whereDocter: Prisma.DocterWhereInput = keyword
+        ? {
+            status: "verified",
+            user: {
+              name: {
+                contains: keyword,
+                mode: "insensitive",
+              },
+            },
+          }
+        : {
+            status: "verified",
+          };
+
+      docters = await prisma.docter.findMany({
+        where: whereDocter,
+        select: {
+          id: true,
+          specialits: true,
+          photoUrl: true,
+          user: {
+            select: {
+              name: true,
+            },
+          },
+          hospital: {
+            select: {
+              name: true,
+            },
           },
         },
-      },
-    });
+      });
+    }
 
     return {
       results,
