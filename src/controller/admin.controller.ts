@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import prisma from "../lib/prisma-client.js";
+import { prisma } from "../lib/prisma-client.js";
 import z from "zod";
 import { ErrorZod } from "../utils/error-zod.js";
 import adminService from "../services/admin.service.js";

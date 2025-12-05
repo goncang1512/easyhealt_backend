@@ -1,4 +1,4 @@
-import prisma from "../lib/prisma-client.js";
+import { prisma } from "../lib/prisma-client.js";
 import { Hono } from "hono";
 import cloudinary from "../lib/cloudinary.js";
 import {
@@ -51,6 +51,7 @@ hospitalApp.get("/", async (c) => {
       result: { results: data.results, docters: data.docters },
     });
   } catch (error) {
+    console.log(error);
     return ErrorZod(error, c);
   }
 });

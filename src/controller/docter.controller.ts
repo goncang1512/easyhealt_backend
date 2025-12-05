@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import cloudinary from "../lib/cloudinary.js";
-import prisma from "../lib/prisma-client.js";
+import { prisma } from "../lib/prisma-client.js";
 import {
   createDocterSchema,
   updateDocterSchema,

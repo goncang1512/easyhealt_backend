@@ -1,6 +1,5 @@
-import { Prisma } from "@prisma/client";
 import { generateId } from "better-auth";
-import prisma from "../lib/prisma-client.js";
+import { Prisma, prisma } from "../lib/prisma-client.js";
 import { HospitalSchemaType } from "../middleware/validator/hospital.schema.js";
 
 const hospitalService = {

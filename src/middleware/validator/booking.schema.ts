@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const createBookingSchema = z.object({
   name: z.string().min(1, { message: "Nama wajib diisi" }),
+  userId: z.string().min(31, { message: "User id harus ada" }),
   noPhone: z
     .string()
     .regex(/^[0-9]+$/, { message: "Nomor telepon hanya boleh berisi angka" })
@@ -10,9 +11,6 @@ export const createBookingSchema = z.object({
   bookDate: z
     .string()
     .min(1, { message: "Tanggal booking wajib diisi" })
-    .refine((val) => /^\d{2}\/\d{2}\/\d{4}$/.test(val), {
-      message: "Format tanggal harus DD/MM/YYYY",
-    })
     .transform((val) => {
       const [day, month, year] = val.split("/");
       return `${year}-${month}-${day}`; // hasil jadi YYYY-MM-DD

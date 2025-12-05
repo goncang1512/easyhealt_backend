@@ -1,5 +1,5 @@
 import { generateId } from "better-auth";
-import prisma from "../lib/prisma-client.js";
+import { prisma } from "../lib/prisma-client.js";
 import { MessageSchemaType } from "../middleware/validator/message.schema.js";
 
 const messageService = {

@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { APIError } from "better-auth";
 import { ContentfulStatusCode } from "hono/utils/http-status";
 import { auth } from "../lib/auth.js";
-import prisma from "../lib/prisma-client.js";
+import { prisma } from "../lib/prisma-client.js";
 import {
   loginSchema,
   registrasiSchema,

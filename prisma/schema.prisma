@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  // output   = "../generated/prisma"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -27,12 +27,13 @@ model User {
   hospital      Hospital[]
   lastSeen      DateTime?
 
-  role    String    @default("Pacient")
-  admin   Admin?
-  roomsA  Room[]    @relation("RoomUserA")
-  roomsB  Room[]    @relation("RoomUserB")
-  message Message[]
-  docter Docter?
+  role     String    @default("Pacient")
+  admin    Admin?
+  roomsA   Room[]    @relation("RoomUserA")
+  roomsB   Room[]    @relation("RoomUserB")
+  message  Message[]
+  docter   Docter?
+  bookings Booking[]
 
   @@unique([email])
   @@map("user")
@@ -112,7 +113,8 @@ model Docter {
   schedule   Json
   photoUrl   String
   photoId    String
-  hospitalId String 
+  prefix     String?
+  hospitalId String
   booking    Booking[]
   status     String
   createdAt  DateTime  @default(now())
@@ -121,6 +123,7 @@ model Docter {
   hospital Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([hospitalId, prefix])
   @@map("docter")
 }
 
@@ -131,21 +134,24 @@ enum StatusBooking {
 }
 
 model Booking {
-  id           String        @id
-  name         String
-  noPhone      String
-  bookDate     String
-  bookTime     String
-  note         String?
-  hospitalId   String
-  docterId     String
-  status       StatusBooking
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @default(now()) @updatedAt
-  bookDateTime DateTime
+  id            String        @id
+  name          String
+  userId        String
+  bookingNumber String        @unique
+  noPhone       String
+  bookDate      String
+  bookTime      String
+  note          String?
+  hospitalId    String
+  docterId      String
+  status        StatusBooking
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @default(now()) @updatedAt
+  bookDateTime  DateTime
 
   docter   Docter   @relation(fields: [docterId], references: [id], onDelete: Cascade)
   hospital Hospital @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("booking")
 }

@@ -1,18 +1,15 @@
-import prisma from "../lib/prisma-client.js";
+import { prisma } from "../lib/prisma-client.js";
 
 const pacientService = {
   getPacientDocter: async (docter_id: string) => {
-    const today = new Date();
-    const next30 = new Date();
-    next30.setDate(today.getDate() + 30);
+    const today = new Date().toISOString();
+    const next30 = new Date(
+      Date.now() + 30 * 24 * 60 * 60 * 1000
+    ).toISOString();
 
     return await prisma.booking.findMany({
       where: {
         docterId: docter_id,
-        bookDateTime: {
-          gte: today,
-          lte: next30,
-        },
       },
       orderBy: {
         bookDateTime: "asc",

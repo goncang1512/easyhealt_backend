@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import prisma from "./prisma-client.js";
+import { prisma } from "./prisma-client.js";
 
 export const auth = betterAuth({
   secret: String(process.env.BETTER_AUTH_SECRET),

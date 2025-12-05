@@ -1,5 +1,5 @@
 import { generateId } from "better-auth";
-import prisma from "../lib/prisma-client.js";
+import { prisma } from "../lib/prisma-client.js";
 import { DocterSchemaType } from "../middleware/validator/docter.schema.js";
 import AppError from "../utils/app-error.js";
 
@@ -18,6 +18,12 @@ const docterService = {
       throw new AppError("Hospital not found", 422);
     }
 
+    const countDocter = await prisma.docter.count({
+      where: {
+        hospitalId: String(hospital?.id),
+      },
+    });
+
     const docter = await prisma.docter.create({
       data: {
         userId: body.user_id,
@@ -28,6 +34,7 @@ const docterService = {
         hospitalId: String(hospital?.id),
         photoId: body.public_id,
         photoUrl: body.secure_url,
+        prefix: `DR${countDocter}`,
       },
     });
 

@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { createBookingSchema } from "../middleware/validator/booking.schema.js";
 import bookingService from "../services/booking.service.js";
 import { ErrorZod } from "../utils/error-zod.js";
-import prisma from "../lib/prisma-client.js";
+import { prisma } from "../lib/prisma-client.js";
 
 const bookingApp = new Hono();
 
@@ -22,6 +22,7 @@ bookingApp.post("/", async (c) => {
       201
     );
   } catch (error) {
+    console.log(error);
     return ErrorZod(error, c);
   }
 });
@@ -49,6 +50,26 @@ bookingApp.put("/status/:booking_id", async (c) => {
       },
       200
     );
+  } catch (error) {
+    return ErrorZod(error, c);
+  }
+});
+
+bookingApp.get("/list/:user_id", async (c) => {
+  try {
+    const userId = c.req.param("user_id");
+    const result = await prisma.booking.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+
+    return {
+      status: true,
+      statusCode: 200,
+      message: "Success get list booking",
+      result,
+    };
   } catch (error) {
     return ErrorZod(error, c);
   }
