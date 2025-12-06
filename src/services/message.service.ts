@@ -40,16 +40,6 @@ const messageService = {
 
     return room;
   },
-  sendMessage: async (body: MessageSchemaType.createChatInput) => {
-    return await prisma.message.create({
-      data: {
-        id: generateId(32),
-        userId: body.senderId,
-        roomId: body.roomId,
-        text: body.text,
-      },
-    });
-  },
 
   getConversation: async (roomId: string) => {
     return await prisma.message.findMany({

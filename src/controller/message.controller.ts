@@ -6,6 +6,7 @@ import {
   sendChatSchema,
 } from "../middleware/validator/message.schema.js";
 import z from "zod";
+import messageStore from "../services/firestore/message.store.js";
 
 const messageApp = new Hono();
 
@@ -35,7 +36,7 @@ messageApp.post("/chat", async (c) => {
   try {
     const parse = sendChatSchema.parse({ senderId, roomId, text });
 
-    const message = await messageService.sendMessage(parse);
+    const message = await messageStore.sendMessage(parse);
 
     return c.json(
       {
