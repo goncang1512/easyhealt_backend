@@ -14,7 +14,7 @@ const messageStore = {
 
     const id = generateId(32);
 
-    const document = doc(firestoreDb, "message", id);
+    const document = doc(firestoreDb, `room/${body.roomId}/message`, id);
     const response = await setDoc(document, bodyMessage);
 
     return response;

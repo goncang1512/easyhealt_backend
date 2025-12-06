@@ -11,6 +11,30 @@ userApp.get("/", (c) => {
   });
 });
 
+userApp.get("/:user_id", async (c) => {
+  try {
+    const result = await prisma.user.findFirst({
+      where: {
+        id: c.req.param("user_id") as string,
+      },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+      },
+    });
+
+    return c.json({
+      status: true,
+      statusCode: 200,
+      message: "Success get home data hospital",
+      result,
+    });
+  } catch (error) {
+    return ErrorZod(error, c);
+  }
+});
+
 userApp.get("/home", async (c) => {
   try {
     const docters = await prisma.docter.findMany({

@@ -2,7 +2,7 @@ import z from "zod";
 
 export const createRoomSchema = z.object({
   senderId: z.string().min(31, "Pengirim ID wajib di isi"),
-  receiverId: z.string().min(31, "Penerima ID wajib di isi"),
+  hospitalId: z.string().min(31, "Penerima ID wajib di isi"),
 });
 
 export const sendChatSchema = z.object({

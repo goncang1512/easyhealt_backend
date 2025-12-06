@@ -7,15 +7,16 @@ import {
 } from "../middleware/validator/message.schema.js";
 import z from "zod";
 import messageStore from "../services/firestore/message.store.js";
+import roomStore from "../services/firestore/room.store.js";
 
 const messageApp = new Hono();
 
 messageApp.post("/room", async (c) => {
-  const { senderId, receiverId } = await c.req.json();
+  const { senderId, hospitalId } = await c.req.json();
   try {
-    const parse = createRoomSchema.parse({ senderId, receiverId });
+    const parse = createRoomSchema.parse({ senderId, hospitalId });
 
-    const rseult = await messageService.createRoom(parse);
+    const rseult = await roomStore.createRoom(parse);
 
     return c.json(
       {
@@ -27,6 +28,8 @@ messageApp.post("/room", async (c) => {
       201
     );
   } catch (error) {
+    console.log(error);
+
     return ErrorZod(error, c);
   }
 });

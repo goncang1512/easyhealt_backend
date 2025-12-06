@@ -4,7 +4,7 @@ import { MessageSchemaType } from "../middleware/validator/message.schema.js";
 
 const messageService = {
   createRoom: async (body: MessageSchemaType.createRoomInput) => {
-    const [userAId, userBId] = [body.senderId, body.receiverId].sort();
+    const [userAId, userBId] = [body.senderId, body.hospitalId].sort();
 
     // cari room yang sudah ada
     let room = await prisma.room.findFirst({
