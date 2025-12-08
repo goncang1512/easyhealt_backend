@@ -80,4 +80,25 @@ messageApp.get("/conversation/:room_id", async (c) => {
   }
 });
 
+messageApp.get("/hospital/:hospital_id", async (c) => {
+  try {
+    const result = await messageService.getChatHospital(
+      c.req.param("hospital_id")
+    );
+
+    return c.json(
+      {
+        status: true,
+        statusCode: 200,
+        message: "Success get hospital room",
+        result: result,
+      },
+      200
+    );
+  } catch (error) {
+    console.log(error);
+    return ErrorZod(error, c);
+  }
+});
+
 export default messageApp;
