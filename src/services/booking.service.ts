@@ -7,8 +7,8 @@ const bookingService = {
   createBooking: async (body: BookingSchemaT.CreateBookingInput) => {
     const combined = `${body.bookDate} ${body.bookTime}`;
 
-    // Sesuaikan format dengan input kamu
-    const parsedDate = parse(combined, "yyyy-dd-M h:mm a", new Date());
+    // Format yang benar untuk: 2025-12-15 12:00 AM
+    const parsedDate = parse(combined, "yyyy-MM-dd h:mm a", new Date());
 
     if (isNaN(parsedDate.getTime())) {
       throw new Error("Invalid date format");

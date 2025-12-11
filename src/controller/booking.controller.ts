@@ -11,6 +11,7 @@ bookingApp.post("/", async (c) => {
   const body = await c.req.json();
   try {
     const parse = createBookingSchema.parse(body);
+
     const result = await bookingService.createBooking(parse);
 
     return c.json(

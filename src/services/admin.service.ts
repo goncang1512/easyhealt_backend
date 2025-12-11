@@ -21,6 +21,7 @@ const adminService = {
     const dokterAktif = await prisma.docter.count({
       where: {
         hospitalId,
+        status: "verified",
         schedule: {
           path: [currentDay, "active"], // misal ['minggu']
           equals: true,
