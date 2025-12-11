@@ -110,6 +110,25 @@ bookingApp.get("/detail/:booking_id", async (c) => {
       where: {
         id: c.req.param("booking_id"),
       },
+      include: {
+        docter: {
+          select: {
+            id: true,
+            specialits: true,
+            photoUrl: true,
+            hospital: {
+              select: {
+                name: true,
+              },
+            },
+            user: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     return c.json(
