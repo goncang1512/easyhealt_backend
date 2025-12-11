@@ -1,7 +1,7 @@
 import { generateId } from "better-auth";
 import { prisma } from "../lib/prisma-client.js";
 import { BookingSchemaT } from "../middleware/validator/booking.schema.js";
-import { formatISO, parse } from "date-fns";
+import { parse } from "date-fns";
 
 const bookingService = {
   createBooking: async (body: BookingSchemaT.CreateBookingInput) => {

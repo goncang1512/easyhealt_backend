@@ -71,12 +71,15 @@ bookingApp.get("/list/:user_id", async (c) => {
       },
     });
 
-    return {
-      status: true,
-      statusCode: 200,
-      message: "Success get list booking",
-      result,
-    };
+    return c.json(
+      {
+        status: true,
+        statusCode: 200,
+        message: "Success get list booking",
+        result,
+      },
+      200
+    );
   } catch (error) {
     return ErrorZod(error, c);
   }
@@ -90,12 +93,15 @@ bookingApp.get("/detail/:booking_id", async (c) => {
       },
     });
 
-    return {
-      status: true,
-      statusCode: 200,
-      message: "Success get detail booking",
-      result,
-    };
+    return c.json(
+      {
+        status: true,
+        statusCode: 200,
+        message: "Success get detail booking",
+        result,
+      },
+      200
+    );
   } catch (error) {
     return ErrorZod(error, c);
   }
