@@ -69,6 +69,25 @@ bookingApp.get("/list/:user_id", async (c) => {
       where: {
         userId: userId,
       },
+      include: {
+        docter: {
+          select: {
+            id: true,
+            specialits: true,
+            photoUrl: true,
+            hospital: {
+              select: {
+                name: true,
+              },
+            },
+            user: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     return c.json(
