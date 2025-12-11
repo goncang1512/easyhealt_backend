@@ -3,6 +3,7 @@ import { createBookingSchema } from "../middleware/validator/booking.schema.js";
 import bookingService from "../services/booking.service.js";
 import { ErrorZod } from "../utils/error-zod.js";
 import { prisma } from "../lib/prisma-client.js";
+import notifStore from "../services/firestore/notification.store.js";
 
 const bookingApp = new Hono();
 
@@ -41,6 +42,12 @@ bookingApp.put("/status/:booking_id", async (c) => {
       },
     });
 
+    await notifStore.updateStatusBooking(
+      result.userId,
+      status,
+      result.bookingNumber
+    );
+
     return c.json(
       {
         status: true,
@@ -68,6 +75,25 @@ bookingApp.get("/list/:user_id", async (c) => {
       status: true,
       statusCode: 200,
       message: "Success get list booking",
+      result,
+    };
+  } catch (error) {
+    return ErrorZod(error, c);
+  }
+});
+
+bookingApp.get("/detail/:booking_id", async (c) => {
+  try {
+    const result = await prisma.booking.findFirst({
+      where: {
+        id: c.req.param("booking_id"),
+      },
+    });
+
+    return {
+      status: true,
+      statusCode: 200,
+      message: "Success get detail booking",
       result,
     };
   } catch (error) {
