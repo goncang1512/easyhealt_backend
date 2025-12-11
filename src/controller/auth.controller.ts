@@ -200,4 +200,29 @@ authApp.get("/session", async (c) => {
   }
 });
 
+authApp.delete("/logout", async (c) => {
+  try {
+    const authHeader = c.req.header("authorization");
+    const token = authHeader?.replace("Bearer ", "");
+
+    const result = await prisma.session.delete({
+      where: {
+        token: token,
+      },
+    });
+
+    return c.json(
+      {
+        status: true,
+        statusCode: 200,
+        message: "Success logout",
+        reuslt: result,
+      },
+      200
+    );
+  } catch (error) {
+    return ErrorZod(error, c);
+  }
+});
+
 export default authApp;
