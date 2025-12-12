@@ -41,12 +41,22 @@ bookingApp.put("/status/:booking_id", async (c) => {
       data: {
         status,
       },
+      select: {
+        userId: true,
+        bookingNumber: true,
+        hospital: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
 
     await notifStore.updateStatusBooking(
       result.userId,
       status,
-      result.bookingNumber
+      result.bookingNumber,
+      result.hospital.name
     );
 
     return c.json(
