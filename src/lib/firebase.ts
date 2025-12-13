@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { Firestore, getFirestore } from "firebase/firestore";
 
+// Firebase
 const firebaseConfig = {
   apiKey: process.env.FIRE_API_KEY,
   authDomain: process.env.FIRE_AUTH_DOMAIN,
