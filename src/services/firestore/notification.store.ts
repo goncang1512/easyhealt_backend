@@ -7,7 +7,8 @@ const notifStore = {
     user_id: string,
     status: string,
     antrian: string,
-    hospital: string
+    hospital: string,
+    from: string
   ) => {
     // Normalisasi status ke lower-case supaya lebih tahan banting
     const s = (status || "").toLowerCase();
@@ -16,16 +17,23 @@ const notifStore = {
 
     // ====== STATUS: CANCEL ======
     if (s === "cancel" || s === "cancelled" || s === "canceled") {
-      bodyNotif = {
-        title: `Booking ${antrian} di ${hospital} dibatalkan oleh dokter`,
-        message: `Booking Anda dengan nomor antrian ${antrian} di rumah sakit ${hospital} telah dibatalkan oleh dokter. Mohon periksa kembali jadwal atau hubungi klinik untuk informasi lebih lanjut.`,
-      };
+      if (from === "dokter") {
+        bodyNotif = {
+          title: `Booking ${antrian} di ${hospital} dibatalkan oleh ${from}`,
+          message: `Booking Anda dengan nomor antrian ${antrian} di rumah sakit ${hospital} telah dibatalkan oleh ${from}. Mohon periksa kembali jadwal atau hubungi klinik untuk informasi lebih lanjut.`,
+        };
+      } else {
+        bodyNotif = {
+          title: `Booking ${antrian} di ${hospital} dibatalkan oleh ${from}`,
+          message: `Booking Anda dengan nomor antrian ${antrian} di rumah sakit ${hospital} telah dibatalkan oleh ${from}. Hubungi admin untuk informasi lebih lanjut.`,
+        };
+      }
 
       // ====== STATUS: CONFIRM ======
     } else if (s === "confirm" || s === "confirmed") {
       bodyNotif = {
         title: `Booking ${antrian} di ${hospital} telah dikonfirmasi`,
-        message: `Dokter telah mengonfirmasi booking Anda dengan nomor antrian ${antrian} di rumah sakit ${hospital}. Harap datang sesuai jadwal atau hubungi klinik jika ingin menjadwalkan ulang.`,
+        message: `${from} telah mengonfirmasi booking Anda dengan nomor antrian ${antrian} di rumah sakit ${hospital}. Harap datang sesuai jadwal atau hubungi klinik jika ingin menjadwalkan ulang.`,
       };
 
       // ====== STATUS: FINISHED ======

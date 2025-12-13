@@ -56,7 +56,8 @@ bookingApp.put("/status/:booking_id", async (c) => {
       result.userId,
       status,
       result.bookingNumber,
-      result.hospital.name
+      result.hospital.name,
+      "dokter"
     );
 
     return c.json(
@@ -148,6 +149,26 @@ bookingApp.get("/detail/:booking_id", async (c) => {
         statusCode: 200,
         message: "Success get detail booking",
         result,
+      },
+      200
+    );
+  } catch (error) {
+    return ErrorZod(error, c);
+  }
+});
+
+bookingApp.delete("/cancel/:booking_id", async (c) => {
+  try {
+    const reusult = await bookingService.deleteBooking(
+      c.req.param("booking_id")
+    );
+
+    return c.json(
+      {
+        status: true,
+        statusCode: 200,
+        message: "Success cancel booking docter",
+        reusult,
       },
       200
     );

@@ -2,6 +2,7 @@ import { generateId } from "better-auth";
 import { prisma } from "../lib/prisma-client.js";
 import { BookingSchemaT } from "../middleware/validator/booking.schema.js";
 import { parse } from "date-fns";
+import notifStore from "./firestore/notification.store.js";
 
 const bookingService = {
   createBooking: async (body: BookingSchemaT.CreateBookingInput) => {
@@ -46,6 +47,37 @@ const bookingService = {
         bookingNumber: `${docter?.prefix}-${(docter?.booking.length ?? 1) + 1}`,
       },
     });
+  },
+  deleteBooking: async (booking_id: string) => {
+    const result = await prisma.booking.delete({
+      where: {
+        id: booking_id,
+      },
+      select: {
+        bookingNumber: true,
+        hospital: {
+          select: {
+            name: true,
+          },
+        },
+        docter: {
+          select: {
+            id: true,
+            userId: true,
+          },
+        },
+      },
+    });
+
+    await notifStore.updateStatusBooking(
+      result.docter.userId,
+      "canceled",
+      result.bookingNumber,
+      result.hospital.name,
+      "pasien"
+    );
+
+    return result;
   },
 };
 
