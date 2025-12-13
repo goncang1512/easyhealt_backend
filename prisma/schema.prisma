@@ -137,7 +137,7 @@ model Booking {
   id            String        @id
   name          String
   userId        String
-  bookingNumber String       
+  bookingNumber String
   noPhone       String
   bookDate      String
   bookTime      String
@@ -154,7 +154,6 @@ model Booking {
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("booking")
-  @@unique([hospitalId, bookingNumber])
 }
 
 model Admin {
