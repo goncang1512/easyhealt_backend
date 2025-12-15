@@ -26,6 +26,8 @@ model User {
   accounts      Account[]
   hospital      Hospital[]
   lastSeen      DateTime?
+  adress  String?
+  phone String?
 
   role     String    @default("Pacient")
   admin    Admin?
