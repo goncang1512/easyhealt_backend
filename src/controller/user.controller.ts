@@ -87,4 +87,34 @@ userApp.get("/home", async (c) => {
   }
 });
 
+userApp.put("/update/:user_id", async (c) => {
+  try {
+    const { username, email, phone, address } = await c.req.json();
+
+    const result = await prisma.user.update({
+      where: {
+        id: c.req.param("user_id"),
+      },
+      data: {
+        name: username,
+        email: email,
+        phone: phone,
+        adress: address,
+      },
+    });
+
+    return c.json(
+      {
+        status: true,
+        statusCode: 200,
+        message: "Success update user",
+        result,
+      },
+      200
+    );
+  } catch (error) {
+    return ErrorZod(error, c);
+  }
+});
+
 export default userApp;
