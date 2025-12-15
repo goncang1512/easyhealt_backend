@@ -53,7 +53,7 @@ userApp.get("/home", async (c) => {
           },
         },
       },
-      take: 4,
+      take: 5,
       orderBy: {
         createdAt: "asc",
       },
