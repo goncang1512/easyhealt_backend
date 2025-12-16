@@ -47,6 +47,12 @@ bookingApp.put("/status/:booking_id", async (c) => {
         hospital: {
           select: {
             name: true,
+            admin: {
+              select: {
+                id: true,
+                userId: true,
+              },
+            },
           },
         },
       },
@@ -57,7 +63,8 @@ bookingApp.put("/status/:booking_id", async (c) => {
       status,
       result.bookingNumber,
       result.hospital.name,
-      "dokter"
+      "dokter",
+      result.hospital.admin.map((item) => item.userId)
     );
 
     return c.json(

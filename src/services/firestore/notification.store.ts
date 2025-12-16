@@ -1,5 +1,5 @@
 import { generateId } from "better-auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, writeBatch } from "firebase/firestore";
 import { firestoreDb } from "../../lib/firebase.js";
 
 const notifStore = {
@@ -8,7 +8,8 @@ const notifStore = {
     status: string,
     antrian: string,
     hospital: string,
-    from: string
+    from: string,
+    admin: string[]
   ) => {
     // Normalisasi status ke lower-case supaya lebih tahan banting
     const s = (status || "").toLowerCase();
@@ -56,12 +57,23 @@ const notifStore = {
       };
     }
 
-    const id = generateId(32);
-    const document = doc(firestoreDb, "notification", id);
-    await setDoc(document, { ...bodyNotif, userId: user_id });
+    const receiverId = [user_id, ...admin];
+
+    const batch = writeBatch(firestoreDb);
+
+    receiverId.forEach((uid) => {
+      const id = generateId(32);
+      const document = doc(firestoreDb, "notification", id);
+      batch.set(document, {
+        ...bodyNotif,
+        userId: uid,
+        createdAt: new Date(),
+      });
+    });
+
+    await batch.commit();
 
     return {
-      id,
       ...bodyNotif,
     };
   },

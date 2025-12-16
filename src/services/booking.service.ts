@@ -58,6 +58,12 @@ const bookingService = {
         hospital: {
           select: {
             name: true,
+            admin: {
+              select: {
+                id: true,
+                userId: true,
+              },
+            },
           },
         },
         docter: {
@@ -74,7 +80,8 @@ const bookingService = {
       "canceled",
       result.bookingNumber,
       result.hospital.name,
-      "pasien"
+      "pasien",
+      result.hospital.admin.map((item) => item.userId)
     );
 
     return result;
