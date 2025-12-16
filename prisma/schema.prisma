@@ -26,8 +26,8 @@ model User {
   accounts      Account[]
   hospital      Hospital[]
   lastSeen      DateTime?
-  adress  String?
-  phone String?
+  adress        String?
+  phone         String?
 
   role     String    @default("Pacient")
   admin    Admin?
@@ -195,4 +195,14 @@ model Message {
   room      Room     @relation(fields: [roomId], references: [id])
 
   @@map("message")
+}
+
+model Notification {
+  id      String @id
+  title   String
+  message String
+  type    String
+  userId  String
+
+  @@map("notification")
 }
