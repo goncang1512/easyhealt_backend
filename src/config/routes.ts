@@ -8,6 +8,7 @@ import docterApp from "../controller/docter.controller.js";
 import bookingApp from "../controller/booking.controller.js";
 import messageApp from "../controller/message.controller.js";
 import socketApp from "../controller/ably.controller.js";
+import homeApp from "../controller/home.controller.js";
 
 const app = new Hono().basePath("/api");
 
@@ -20,6 +21,7 @@ const routes = app
   .route("/admin", adminApp)
   .route("/docter", docterApp)
   .route("/message", messageApp)
-  .route("/socket", socketApp);
+  .route("/socket", socketApp)
+  .route("/home", homeApp);
 
 export default routes;
