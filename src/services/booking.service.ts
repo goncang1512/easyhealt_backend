@@ -30,7 +30,7 @@ const bookingService = {
         docterId: body.docterId,
         hospitalId: body.hospitalId,
         note: body.note,
-        bookDateTime: `${body.bookDate} ${body.bookTime}`,
+        bookDateTime: new Date(),
         status: "confirm",
         userId: body.userId,
         bookingNumber: `${docter?.prefix}-${(docter?.booking.length ?? 0) + 1}`,
