@@ -12,7 +12,7 @@ bookingApp.post("/", async (c) => {
   try {
     const parse = createBookingSchema.parse(body);
 
-    const result = await bookingService.createBooking(parse);
+    const result = await bookingService.createBooking(body);
 
     return c.json(
       {
