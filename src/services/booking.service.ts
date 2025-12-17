@@ -6,12 +6,20 @@ import notifStore from "./firestore/notification.store.js";
 
 const bookingService = {
   createBooking: async (body: BookingSchemaT.CreateBookingInput) => {
-    const combined = `${body.bookDate} ${body.bookTime}`;
+    // ✅ Normalisasi waktu: pastikan ada spasi sebelum AM/PM
+    const normalizedTime = body.bookTime.replace(/(AM|PM)$/i, " $1");
 
-    // Format yang benar untuk: 2025-12-15 12:00 AM
+    const combined = `${body.bookDate} ${normalizedTime}`;
+    // contoh hasil: 2025-12-15 12:00 AM
+
     const parsedDate = parse(combined, "yyyy-MM-dd h:mm a", new Date());
 
     if (isNaN(parsedDate.getTime())) {
+      console.error("INVALID DATE INPUT:", {
+        bookDate: body.bookDate,
+        bookTime: body.bookTime,
+        combined,
+      });
       throw new Error("Invalid date format");
     }
 
@@ -36,7 +44,7 @@ const bookingService = {
         id: generateId(32),
         name: body.name,
         bookDate: body.bookDate,
-        bookTime: body.bookTime,
+        bookTime: normalizedTime, // ✅ simpan versi yang sudah rapi
         noPhone: body.noPhone,
         docterId: body.docterId,
         hospitalId: body.hospitalId,
@@ -44,7 +52,7 @@ const bookingService = {
         bookDateTime: dateTimeISO,
         status: "confirm",
         userId: body.userId,
-        bookingNumber: `${docter?.prefix}-${(docter?.booking.length ?? 1) + 1}`,
+        bookingNumber: `${docter?.prefix}-${(docter?.booking.length ?? 0) + 1}`,
       },
     });
   },
