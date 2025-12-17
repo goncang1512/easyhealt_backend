@@ -7,6 +7,9 @@ const homeApp = new Hono();
 homeApp.get("/user", async (c) => {
   try {
     const docters = await prisma.docter.findMany({
+      where: {
+        status: "verified",
+      },
       select: {
         id: true,
         user: {
@@ -40,8 +43,6 @@ homeApp.get("/user", async (c) => {
         createdAt: "asc",
       },
     });
-
-    console.log({ docters, hospitals });
 
     return c.json({
       status: true,
