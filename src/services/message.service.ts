@@ -60,7 +60,7 @@ const messageService = {
 
     const room = snap.data() as DocumentData | { hospitalId: string };
 
-    return await prisma.hospital.findFirst({
+    const result = await prisma.hospital.findFirst({
       where: {
         id: room.hospitalId,
       },
@@ -69,6 +69,10 @@ const messageService = {
         name: true,
       },
     });
+
+    console.log({ result, room });
+
+    return result;
   },
 };
 

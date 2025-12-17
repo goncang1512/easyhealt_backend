@@ -15,8 +15,8 @@ const roomStore = {
     const [userAId, hospitalId] = [body.senderId, body.hospitalId].sort();
 
     const bodyRoom = {
-      userAId,
-      hospitalId,
+      userAId: hospitalId,
+      hospitalId: userAId,
     };
     const q = query(
       collection(firestoreDb, "room"),

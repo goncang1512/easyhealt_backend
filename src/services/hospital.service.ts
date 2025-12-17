@@ -93,7 +93,7 @@ const hospitalService = {
   },
 
   createHospital: async (body: HospitalSchemaType.CreateHopsitalT) => {
-    return await prisma.hospital.create({
+    const result = await prisma.hospital.create({
       data: {
         id: generateId(32),
         name: body.name,
@@ -113,6 +113,17 @@ const hospitalService = {
         },
       },
     });
+
+    await prisma.user.update({
+      where: {
+        id: body.admin_id,
+      },
+      data: {
+        role: "Admin",
+      },
+    });
+
+    return result;
   },
 
   updateHospital: async (body: HospitalSchemaType.UpdateHopsitalT) => {
